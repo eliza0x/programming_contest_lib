@@ -1,4 +1,4 @@
-module Array where
+module IOArray where
 
 import qualified Data.Array.IO as A
 
