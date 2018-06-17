@@ -35,6 +35,7 @@ object Kruscal {
             mst(to)   = Edge(from, cost) :: mst(to)
             union(from, to)
         }
+
         def find(i: Int): Int = {
             if (unionFind(i) == i) i
               else {
