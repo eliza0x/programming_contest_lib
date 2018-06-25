@@ -153,75 +153,21 @@ template <typename T> class Stream {
     }
 };
 
-int f(int x) {
-    return x * 2;
-};
-
-fun<char(int)> g = [](auto x) {
-    return (char) x + 64;
-};
-
-fun<void(int)> h = [](auto x) {
-  cout << x << " ";
-};
-
-fun<bool(int)> odd = [](auto x) {
-    return x%2 == 1;
-};
-
-fun<int(int, int)> add = [](auto x, auto y) {
-    return x + y;
-};
-
-fun<int(int, int)> mul = [](auto x, auto y) {
-    return x * y;
-};
-
 int main() {
   Stream<int>  s = {1, 2, 3, 4, 5};
-
-  // 一応中身の要素を出力できる。
-  s.debug();
-
-  // zip : Stream<a> -> Stream<b> -> Stream<pair<a,b>>
-  s.zip(s)
-   .foreach([](auto x){cout << "(" << x.first << ", " << x.second << ") ";});
-
-  // map : Stream<a> -> fun<b(a)> -> Stream<b>
-  s.map(g).debug();
-  s.map(fun<int(int)>(f)).debug();
- 
-  // foreach : Stream<a> -> fun<void(a)>;
-  s.foreach(h);
-  cout << endl;
   
-  // filter : Stream<a> -> fun<bool(a)> -> Stream<a>
-  s.filter(odd).debug();
-
-  // foldl, foldr : Stream<a> -> fun<b(b, a)> -> b -> b
-  cout << s.foldl(mul, 1) << endl;
-  cout << s.foldr(mul, 1) << endl;
-  
-  // scanl, foldr : Stream<a> -> fun<b(b, a)> -> b -> Stream<b>
-  s.scanl(add, 0).debug();
-  s.scanr(add, 0).debug();
-
-  // reverse : Stream<a> -> Stream<a>
-  s.reverse().debug();
-  
-  // take, drop : Stream<a> -> size_t -> Stream<a>
-  s.take(3).debug();
-  s.drop(3).debug();
-
-  // range-based for
-  for (auto x: s.map(g))
+  for (auto x: s)
     cout << x << " ";
   cout << endl;
- 
-  // chain
+
+  cout << s.map([](auto x){return x * 2;})
+           .foldl([](auto x, auto y){return x + y;}, 0) << endl;
+
   s.map([](auto x){return x * 2;})
    .zip(s)
    .map([](auto p){return make_pair(p.first, 10*p.second);})
+   .take(3)
+   .reverse()
    .foreach([](auto x){cout << "(" << x.first << ", " << x.second << ") ";});
   cout << endl;
 };
